@@ -1,4 +1,5 @@
 using ClockIn.DataLayer;
+using ClockIn.DataLayer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DbContext>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
 
 var app = builder.Build();
 
