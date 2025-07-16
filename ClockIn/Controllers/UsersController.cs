@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ClockIn.DataLayer.Repositories;
 using ClockIn.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClockIn.Controllers
 {
-
+    [Authorize]
     [ApiController]
     [Route("api/v1/users")]
     public class UsersController : ControllerBase
