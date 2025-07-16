@@ -7,7 +7,5 @@ namespace ClockIn.DataLayer.Repositories
         Task<IEnumerable<AuditLog>> GetAllAsync();
         Task<AuditLog?> GetByIdAsync(Guid id);
         Task<Guid> CreateAsync(AuditLog entry);
-        Task<bool> UpdateAsync(AuditLog entry);
-        Task<bool> DeleteAsync(Guid id);
     }
 }

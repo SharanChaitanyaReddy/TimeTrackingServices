@@ -4,10 +4,9 @@ namespace ClockIn.DataLayer.Repositories
 {
     public interface ITimeEntryTagRepository
     {
-        Task<IEnumerable<TimeEntryTag>> GetAllAsync();
-        Task<TimeEntryTag?> GetByIdAsync(Guid id);
-        Task<Guid> CreateAsync(TimeEntryTag entry);
-        Task<bool> UpdateAsync(TimeEntryTag entry);
-        Task<bool> DeleteAsync(Guid id);
+        Task<IEnumerable<Guid>> GetTagIdsByTimeEntryIdAsync(Guid timeEntryId);
+        Task AddAsync(Guid timeEntryId, Guid tagId);
+        Task<bool> RemoveAsync(Guid timeEntryId, Guid tagId);
+
     }
 }
