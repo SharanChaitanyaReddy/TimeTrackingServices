@@ -1,5 +1,5 @@
 ﻿using ClockIn.DataLayer;
-using ClockIn.DataLayer.Repositories;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +31,7 @@ namespace ClockIn.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(TimeEntry entry)
         {
-            if (await IsHolidayOrWeekend(entry.StartTime))
+            if (await _repository.IsHolidayOrWeekend(entry.StartTime))
             {
                 return BadRequest("You cannot submit a time entry on weekends or holidays.");
             }
@@ -43,7 +43,7 @@ namespace ClockIn.Controllers
         public async Task<IActionResult> Update(Guid id, TimeEntry entry)
         {
             if (id != entry.Id) return BadRequest();
-            if (await IsHolidayOrWeekend(entry.StartTime))
+            if (await _repository.IsHolidayOrWeekend(entry.StartTime))
             {
                 return BadRequest("You cannot submit a time entry on weekends or holidays.");
             }
@@ -57,16 +57,7 @@ namespace ClockIn.Controllers
             var result = await _repository.DeleteAsync(id);
             return result ? NoContent() : NotFound();
         }
-        private async Task<bool> IsHolidayOrWeekend(DateTime date)
-        {
-            var isWeekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
-            if (isWeekend) return true;
-
-            using var connection = _context.CreateConnection();
-            var sql = "SELECT COUNT(1) FROM holidays WHERE holiday_date = @Date";
-            var count = await connection.ExecuteScalarAsync<int>(sql, new { Date = date.Date });
-            return count > 0;
-        }
+        
 
     }
 }

@@ -1,4 +1,5 @@
 using ClockIn.DataLayer;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.DataLayer.Repositories;
 using ClockIn.Security.models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +76,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+
+    if (path != null && (path.StartsWith("/swagger") || path.StartsWith("/api/auth/login")))
+    {
+        // Skip antiforgery check
+        context.Items["__SkipAntiforgery"] = true;
+    }
+
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

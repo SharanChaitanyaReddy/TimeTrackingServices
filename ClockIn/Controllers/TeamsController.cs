@@ -1,11 +1,13 @@
-﻿using ClockIn.DataLayer.Repositories;
+﻿using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/teams")]
+    [Authorize(Roles = "Operations,Admin")]
     public class TeamsController : ControllerBase
     {
         private readonly ITeamRepository _repository;

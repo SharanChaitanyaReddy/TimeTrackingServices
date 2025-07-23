@@ -1,6 +1,6 @@
 ﻿using ClockIn.Models;
 
-namespace ClockIn.DataLayer.Repositories
+namespace ClockIn.DataLayer.IRepositories
 {
     public interface ITimeEntryTagRepository
     {

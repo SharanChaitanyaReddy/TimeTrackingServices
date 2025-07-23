@@ -1,8 +1,12 @@
-﻿using ClockIn.Security.models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
+using ClockIn.Security.models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ClockIn.Controllers
@@ -12,26 +16,39 @@ namespace ClockIn.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        // You can inject your user repository or user manager here for user validation
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IUserRepository userRepository)
         {
             _configuration = configuration;
+            _userRepository = userRepository;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
         {
-            // TODO: Validate user credentials (replace with real user validation)
-            if (request.Username != "testuser" || request.Password != "P@ssw0rd")
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 return Unauthorized("Invalid username or password");
 
-            var token = GenerateJwtToken(request.Username);
+            var user = await _userRepository.GetByUsernameAsync(request.Email);
+
+            if(user == null || user.Email != request.Email || user.PasswordHash != HashPassword(request.Password))
+                return Unauthorized("Invalid username or password");
+
+            var token = GenerateJwtToken(user);
 
             return Ok(new { token });
         }
 
-        private string GenerateJwtToken(string username)
+        private string HashPassword(string password)
+        {
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hash);
+        }
+
+        private string GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtConfig").Get<JwtConfig>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
@@ -40,8 +57,8 @@ namespace ClockIn.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] {
-                new Claim(ClaimTypes.Name, username),
-                // add other claims like roles here if needed
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             }),
                 Expires = DateTime.UtcNow.AddMinutes(jwtSettings.ExpiryMinutes),
                 Issuer = jwtSettings.Issuer,
@@ -52,6 +69,19 @@ namespace ClockIn.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        [HttpPost("register")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Register([FromBody] User user)
+        {
+            user.PasswordHash = HashPassword(user.PasswordHash); 
+            await _userRepository.CreateAsync(user);
+
+            var token = GenerateJwtToken(user);
+
+            return Ok(new { token });
+        }
+
     }
 
 }

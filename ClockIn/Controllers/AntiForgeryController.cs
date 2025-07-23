@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClockIn.Controllers
 {
     [ApiController]
+    [IgnoreAntiforgeryToken]
     [Route("api/v1/anti-forgery")]
     public class AntiForgeryController : ControllerBase
     {
@@ -14,8 +15,8 @@ namespace ClockIn.Controllers
             _antiforgery = antiforgery;
         }
 
-        [HttpGet("token")]
-        public IActionResult GetToken()
+        [HttpGet("xsrf-token")]
+        public IActionResult GetToken([FromServices] IAntiforgery antiforgery)
         {
             var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
             return Ok(new { token = tokens.RequestToken });

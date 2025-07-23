@@ -1,4 +1,4 @@
-﻿using ClockIn.DataLayer.Repositories;
+﻿using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
 using Microsoft.AspNetCore.Mvc;
 
