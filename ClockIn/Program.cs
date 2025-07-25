@@ -55,16 +55,28 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAntiforgery(options =>
+builder.Services.AddCors(options =>
 {
-    options.Cookie.Name = "XSRF-TOKEN"; 
-    options.HeaderName = "X-XSRF-TOKEN";
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Needed if using cookies / auth headers
+    });
 });
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+
+//builder.Services.AddAntiforgery(options =>
+//{
+//    options.Cookie.Name = "XSRF-TOKEN"; 
+//    options.HeaderName = "X-XSRF-TOKEN";
+//});
+
+//builder.Services.AddControllers(options =>
+//{
+//    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+//});
 
 builder.Services.AddAuthorization();
 
@@ -88,7 +100,7 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
+app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

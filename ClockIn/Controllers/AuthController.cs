@@ -33,12 +33,14 @@ namespace ClockIn.Controllers
 
             var user = await _userRepository.GetByUsernameAsync(request.Email);
 
-            if(user == null || user.Email != request.Email || user.PasswordHash != HashPassword(request.Password))
+            string hashedValue = HashPassword(request.Password);
+
+            if (user == null || user.Email != request.Email || user.PasswordHash != hashedValue)
                 return Unauthorized("Invalid username or password");
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new { token });
+            return Ok(new { token =  token, role = user.Role });
         }
 
         private string HashPassword(string password)

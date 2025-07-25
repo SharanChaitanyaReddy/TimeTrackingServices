@@ -5,7 +5,7 @@ using ClockIn.DataLayer.IRepositories;
 
 namespace ClockIn.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     [ApiController]
     [Route("api/v1/users")]
     public class UsersController : ControllerBase

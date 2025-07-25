@@ -7,7 +7,7 @@ namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/teams")]
-    [Authorize(Roles = "Operations,Admin")]
+    [Authorize(Roles = "operations,admin")]
     public class TeamsController : ControllerBase
     {
         private readonly ITeamRepository _repository;

@@ -7,7 +7,7 @@ namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/Projects")]
-    [Authorize(Roles = "Operations,Admin,Manager")]
+    [Authorize(Roles = "operations,admin,manager")]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectRepository _repository;
