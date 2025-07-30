@@ -1,5 +1,8 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using Dapper;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace ClockIn.DataLayer.Repositories
 {
@@ -19,6 +22,13 @@ namespace ClockIn.DataLayer.Repositories
             return await connection.QueryAsync<User>(sql);
         }
 
+        public async Task<User?> GetByUsernameAsync(string email)
+        {
+            var sql = "SELECT * FROM users WHERE email = @Email AND is_active = TRUE LIMIT 1";
+            using var connection = _context.CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+        }
+
         public async Task<User?> GetByIdAsync(Guid id)
         {
             var sql = "SELECT * FROM users WHERE id = @Id";
@@ -29,10 +39,9 @@ namespace ClockIn.DataLayer.Repositories
         public async Task<Guid> CreateAsync(User user)
         {
             var sql = @"
-            INSERT INTO users (id, name, email, role, team_id, hourly_rate, is_active, created_at)
-            VALUES (@Id, @Name, @Email, @Role, @TeamId, @HourlyRate, @IsActive, @CreatedAt)";
+            INSERT INTO users (firstname, lastname, passwordhash, email, role, team_id, hourly_rate, is_active, created_at)
+            VALUES (@FirstName, @LastName, @PasswordHash, @Email, @Role, @TeamId, @HourlyRate, @IsActive, @CreatedAt)";
             using var connection = _context.CreateConnection();
-            user.Id = Guid.NewGuid();
             user.CreatedAt = DateTime.UtcNow;
             await connection.ExecuteAsync(sql, user);
             return user.Id;
@@ -61,5 +70,15 @@ namespace ClockIn.DataLayer.Repositories
             var rows = await connection.ExecuteAsync(sql, new { Id = id });
             return rows > 0;
         }
-    }
+
+   
+        private string HashPassword(string password)
+        {
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hash);
+        }
+
+      
+    }   
 }

@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using ClockIn.DataLayer.IRepositories;
+using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
 {
@@ -20,9 +21,9 @@ namespace ClockIn.DataLayer.Repositories
 
         public async Task AddAsync(Guid timeEntryId, Guid tagId)
         {
-            const string sql = "INSERT INTO time_entry_tags (time_entry_id, tag_id) VALUES (@TimeEntryId, @TagId)";
+            const string sql = "INSERT INTO time_entry_tags ( tag_id) VALUES (@TagId)";
             using var connection = _context.CreateConnection();
-            await connection.ExecuteAsync(sql, new { TimeEntryId = timeEntryId, TagId = tagId });
+            await connection.ExecuteAsync(sql, new {TagId = tagId });
         }
 
         public async Task<bool> RemoveAsync(Guid timeEntryId, Guid tagId)

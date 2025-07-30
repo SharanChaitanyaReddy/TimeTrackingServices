@@ -1,4 +1,5 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
@@ -30,13 +31,12 @@ namespace ClockIn.DataLayer.Repositories
         {
             const string sql = @"
             INSERT INTO tasks (
-                id, project_id, name, description, assigned_to, status, due_date, created_at
+                project_id, name, description, assigned_to, status, due_date, created_at
             )
             VALUES (
-                @Id, @ProjectId, @Name, @Description, @AssignedTo, @Status, @DueDate, @CreatedAt
+                @ProjectId, @Name, @Description, @AssignedTo, @Status, @DueDate, @CreatedAt
             )";
 
-            task.Id = Guid.NewGuid();
             task.CreatedAt = DateTime.UtcNow;
 
             using var connection = _context.CreateConnection();

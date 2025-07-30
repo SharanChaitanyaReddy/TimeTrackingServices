@@ -1,4 +1,5 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
@@ -30,10 +31,10 @@ namespace ClockIn.DataLayer.Repositories
         {
             const string sql = @"
             INSERT INTO productivity_benchmarks (
-                id, user_id, week_start, expected_hours, actual_hours, status, created_at
+                user_id, week_start, expected_hours, actual_hours, status, created_at
             )
             VALUES (
-                @Id, @UserId, @WeekStart, @ExpectedHours, @ActualHours, @Status, @CreatedAt
+                @UserId, @WeekStart, @ExpectedHours, @ActualHours, @Status, @CreatedAt
             )";
 
             benchmark.Id = Guid.NewGuid();

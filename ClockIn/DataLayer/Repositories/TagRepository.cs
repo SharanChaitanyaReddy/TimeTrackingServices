@@ -1,4 +1,5 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
@@ -28,7 +29,7 @@ namespace ClockIn.DataLayer.Repositories
 
         public async Task<Guid> CreateAsync(Tag tag)
         {
-            const string sql = "INSERT INTO tags (id, name) VALUES (@Id, @Name)";
+            const string sql = "INSERT INTO tags (name) VALUES (@Name)";
             tag.Id = Guid.NewGuid();
 
             using var connection = _context.CreateConnection();

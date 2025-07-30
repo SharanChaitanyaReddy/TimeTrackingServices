@@ -1,5 +1,6 @@
 ﻿namespace ClockIn.DataLayer.Repositories
 {
+    using ClockIn.DataLayer.IRepositories;
     using ClockIn.Models;
     using Dapper;
 
@@ -30,17 +31,15 @@
         {
             const string sql = @"
             INSERT INTO time_entries (
-                id, user_id, task_id, project_id,
+                user_id, task_id, project_id,
                 start_time, end_time, is_manual, description,
                 is_approved, submitted_at, approved_at, approved_by, created_at
             )
             VALUES (
-                @Id, @UserId, @TaskId, @ProjectId,
+                @UserId, @TaskId, @ProjectId,
                 @StartTime, @EndTime, @IsManual, @Description,
                 @IsApproved, @SubmittedAt, @ApprovedAt, @ApprovedBy, @CreatedAt
             )";
-
-            entry.Id = Guid.NewGuid();
             entry.CreatedAt = DateTime.UtcNow;
 
             using var connection = _context.CreateConnection();
@@ -77,6 +76,17 @@
             using var connection = _context.CreateConnection();
             var rows = await connection.ExecuteAsync(sql, new { Id = id });
             return rows > 0;
+        }
+
+        public async Task<bool> IsHolidayOrWeekend(DateTime date)
+        {
+            var isWeekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+            if (isWeekend) return true;
+
+            using var connection = _context.CreateConnection();
+            var sql = "SELECT COUNT(1) FROM holidays WHERE holiday_date = @Date";
+            var count = await connection.ExecuteScalarAsync<int>(sql, new { Date = date.Date });
+            return count > 0;
         }
     }
 

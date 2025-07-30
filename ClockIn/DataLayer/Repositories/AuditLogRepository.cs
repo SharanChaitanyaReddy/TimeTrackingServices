@@ -1,4 +1,5 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
@@ -29,10 +30,9 @@ namespace ClockIn.DataLayer.Repositories
         public async Task<Guid> CreateAsync(AuditLog log)
         {
             const string sql = @"
-            INSERT INTO audit_logs (id, user_id, action, entity_name, entity_id, timestamp, metadata)
-            VALUES (@Id, @UserId, @Action, @EntityName, @EntityId, @Timestamp, @Metadata)";
+            INSERT INTO audit_logs (user_id, action, entity_name, entity_id, timestamp, metadata)
+            VALUES (@UserId, @Action, @EntityName, @EntityId, @Timestamp, @Metadata)";
 
-            log.Id = Guid.NewGuid();
             log.Timestamp = DateTime.UtcNow;
 
             using var connection = _context.CreateConnection();
