@@ -1,0 +1,6 @@
+@ClockIn.UnitTest_HostAddress = http://localhost:5178
+
+GET {{ClockIn.UnitTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

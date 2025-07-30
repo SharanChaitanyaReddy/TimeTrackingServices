@@ -1,8 +1,67 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+﻿## Ignore build results
+bin/
+obj/
+out/
 
-/.vs/TimeTrackingServices
-/ClockIn/bin/Debug/net8.0
-/ClockIn/obj/Debug/net8.0
-/.vs/ProjectEvaluation
+## User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Rider project files
+.idea/
+
+## VS Code settings
+.vscode/
+
+## Visual Studio files
+.vs/
+
+## Dotnet watch files
+**/tmp/
+
+## ASP.NET Core environment settings
+appsettings.*.json
+secrets.json
+
+## Logs
+*.log
+logs/
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+## Test Results
+TestResults/
+*.coverage
+*.coveragejson
+*.test.json
+
+## Resharper
+_ReSharper*/
+*.DotSettings.user
+
+## Global.json cache
+global.json.lock
+
+## Others
+project.lock.json
+project.fragment.lock.json
+
+# JetBrains Rider caches
+.idea/
+
+# Auto-generated files
+Generated_Code/
+
+# Publish folder
+publish/
