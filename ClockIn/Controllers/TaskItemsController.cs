@@ -1,11 +1,13 @@
-﻿using ClockIn.DataLayer.Repositories;
+﻿using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/taskitems")]
+    [Authorize(Roles = "Operations,Admin,Manager")]
     public class TaskItemsController : ControllerBase
     {
         private readonly ITaskItemRepository _repository;

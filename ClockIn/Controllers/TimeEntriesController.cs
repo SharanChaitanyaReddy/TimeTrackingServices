@@ -1,5 +1,5 @@
 ﻿using ClockIn.DataLayer;
-using ClockIn.DataLayer.Repositories;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +31,7 @@ namespace ClockIn.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(TimeEntry entry)
         {
-            if (await IsHolidayOrWeekend(entry.StartTime))
+            if (await _repository.IsHolidayOrWeekend(entry.StartTime))
             {
                 return BadRequest("You cannot submit a time entry on weekends or holidays.");
             }
@@ -43,7 +43,7 @@ namespace ClockIn.Controllers
         public async Task<IActionResult> Update(Guid id, TimeEntry entry)
         {
             if (id != entry.Id) return BadRequest();
-            if (await IsHolidayOrWeekend(entry.StartTime))
+            if (await _repository.IsHolidayOrWeekend(entry.StartTime))
             {
                 return BadRequest("You cannot submit a time entry on weekends or holidays.");
             }
@@ -56,7 +56,8 @@ namespace ClockIn.Controllers
         {
             var result = await _repository.DeleteAsync(id);
             return result ? NoContent() : NotFound();
-        }      
+        }
+        
 
     }
 }

@@ -1,10 +1,12 @@
 ﻿using ClockIn.Models;
 
-namespace ClockIn.DataLayer.Repositories
+namespace ClockIn.DataLayer.IRepositories
 {
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetAllAsync();
+
+        Task<User?> GetByUsernameAsync(string username);
         Task<User?> GetByIdAsync(Guid id);
         Task<Guid> CreateAsync(User user);
         Task<bool> UpdateAsync(User user);

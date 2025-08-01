@@ -1,6 +1,6 @@
 ﻿using ClockIn.Models;
 
-namespace ClockIn.DataLayer.Repositories
+namespace ClockIn.DataLayer.IRepositories
 {
     public interface ITimeEntryRepository
     {
@@ -9,5 +9,6 @@ namespace ClockIn.DataLayer.Repositories
         Task<Guid> CreateAsync(TimeEntry entry);
         Task<bool> UpdateAsync(TimeEntry entry);
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> IsHolidayOrWeekend(DateTime date);
     }
 }

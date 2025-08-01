@@ -1,4 +1,5 @@
 using ClockIn.DataLayer;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.DataLayer.Repositories;
 using ClockIn.Security.models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,16 +55,28 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAntiforgery(options =>
+builder.Services.AddCors(options =>
 {
-    options.Cookie.Name = "XSRF-TOKEN"; 
-    options.HeaderName = "X-XSRF-TOKEN";
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Needed if using cookies / auth headers
+    });
 });
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+
+//builder.Services.AddAntiforgery(options =>
+//{
+//    options.Cookie.Name = "XSRF-TOKEN"; 
+//    options.HeaderName = "X-XSRF-TOKEN";
+//});
+
+//builder.Services.AddControllers(options =>
+//{
+//    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+//});
 
 builder.Services.AddAuthorization();
 
@@ -75,7 +88,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
 
+    if (path != null && (path.StartsWith("/swagger") || path.StartsWith("/api/auth/login")))
+    {
+        // Skip antiforgery check
+        context.Items["__SkipAntiforgery"] = true;
+    }
+
+    await next();
+});
+app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

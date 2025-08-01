@@ -1,11 +1,13 @@
-﻿using ClockIn.DataLayer.Repositories;
+﻿using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/tags")]
+    [Authorize(Roles = "Operations,Admin,Manager")]
     public class TagsController : ControllerBase
     {
         private readonly ITagRepository _repository;

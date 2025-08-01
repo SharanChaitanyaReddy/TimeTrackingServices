@@ -1,11 +1,13 @@
-﻿using ClockIn.DataLayer.Repositories;
+﻿using ClockIn.DataLayer.IRepositories;
 using ClockIn.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClockIn.Controllers
 {
     [ApiController]
     [Route("api/v1/auditlogs")]
+    [Authorize(Roles = "Operations,Admin,Manager")]
     public class AuditLogsController : ControllerBase
     {
         private readonly IAuditLogRepository _repository;

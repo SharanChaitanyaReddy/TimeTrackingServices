@@ -1,4 +1,6 @@
-﻿using ClockIn.Models;
+﻿using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
+using Dapper;
 
 namespace ClockIn.DataLayer.Repositories
 {
@@ -20,9 +22,11 @@ namespace ClockIn.DataLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Project>> GetAllAsync()
+        public async Task<IEnumerable<Project>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            const string query = "SELECT * FROM projects";
+            using var connection = _context.CreateConnection();
+            return await connection.QueryAsync<Project>(query);
         }
 
         public Task<Project?> GetByIdAsync(Guid id)
