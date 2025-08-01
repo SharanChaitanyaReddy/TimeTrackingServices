@@ -1,4 +1,5 @@
 ﻿using ClockIn.Controllers;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.DataLayer.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -39,7 +40,8 @@ namespace ClockIn.UnitTest.Controllers
             var timeEntryId = Guid.NewGuid();
             var tagId = Guid.NewGuid();
 
-            _mockRepo.Setup(r => r.AddAsync(timeEntryId, tagId)).Returns(Task.CompletedTask);
+            // Fix: Ensure the repository method returns a Task, not Task.CompletedTask directly.
+            _mockRepo.Setup(r => r.AddAsync(timeEntryId, tagId));
 
             var result = await _controller.AddTagToTimeEntry(timeEntryId, tagId);
 

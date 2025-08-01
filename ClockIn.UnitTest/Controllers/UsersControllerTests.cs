@@ -1,4 +1,5 @@
 ﻿using ClockIn.Controllers;
+using ClockIn.DataLayer.IRepositories;
 using ClockIn.DataLayer.Repositories;
 using ClockIn.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace ClockIn.UnitTest.Controllers
                 new User
                 {
                     Id = Guid.NewGuid(),
-                    Name = "testuser",
+                    FirstName = "testuser",
                     Email = "test@example.com"
                 }
             };
@@ -48,7 +49,7 @@ namespace ClockIn.UnitTest.Controllers
             var user = new User
             {
                 Id = id,
-                Name = "testuser",
+                FirstName = "testuser",
                 Email = "test@example.com"
             };
             _mockRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(user);
@@ -76,7 +77,7 @@ namespace ClockIn.UnitTest.Controllers
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Name = "testuser",
+                FirstName = "testuser",
                 Email = "test@example.com"
             };
             _mockRepo.Setup(r => r.CreateAsync(user)).ReturnsAsync(user.Id);
@@ -95,7 +96,7 @@ namespace ClockIn.UnitTest.Controllers
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Name = "testuser",
+                FirstName = "testuser",
                 Email = "test@example.com"
             };
             _mockRepo.Setup(r => r.UpdateAsync(user)).ReturnsAsync(true);
@@ -111,7 +112,7 @@ namespace ClockIn.UnitTest.Controllers
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Name = "testuser",
+                FirstName = "testuser",
                 Email = "test@example.com"
             };
             _mockRepo.Setup(r => r.UpdateAsync(user)).ReturnsAsync(false);
@@ -127,7 +128,7 @@ namespace ClockIn.UnitTest.Controllers
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Name = "testuser",
+                FirstName = "testuser",
                 Email = "test@example.com"
             };
             var differentId = Guid.NewGuid();
