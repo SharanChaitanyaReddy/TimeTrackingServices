@@ -65,3 +65,5 @@ Generated_Code/
 
 # Publish folder
 publish/
+/ClockIn/obj/Debug/net8.0/ClockIn.AssemblyInfo.cs
+/ClockIn/obj/Debug/net8.0/ClockIn.AssemblyInfoInputs.cache
