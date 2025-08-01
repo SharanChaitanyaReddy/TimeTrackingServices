@@ -56,18 +56,7 @@ namespace ClockIn.Controllers
         {
             var result = await _repository.DeleteAsync(id);
             return result ? NoContent() : NotFound();
-        }
-        private async Task<bool> IsHolidayOrWeekend(DateTime date)
-        {
-            /*var isWeekend = date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
-            if (isWeekend) return true;
-
-            using var connection = _context.CreateConnection();
-            var sql = "SELECT COUNT(1) FROM holidays WHERE holiday_date = @Date";
-            var count = await connection.ExecuteScalarAsync<int>(sql, new { Date = date.Date });
-            return count > 0;*/
-            return true;
-        }
+        }      
 
     }
 }
