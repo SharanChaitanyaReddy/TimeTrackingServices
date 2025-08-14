@@ -1,7 +1,12 @@
 ﻿using ClockIn.Controllers;
+using ClockIn.DataLayer.IRepositories;
+using ClockIn.Models;
 using ClockIn.Security.models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Xunit;
 
 namespace ClockIn.UnitTest.Controllers
@@ -10,52 +15,73 @@ namespace ClockIn.UnitTest.Controllers
     {
         private readonly Mock<IConfiguration> _mockConfig;
         private readonly AuthController _controller;
-
+        private readonly Mock<IUserRepository> _mockUserRepository;
         public AuthControllerTests()
         {
             _mockConfig = new Mock<IConfiguration>();
-            var jwtSection = new Mock<IConfigurationSection>();
-            jwtSection.Setup(x => x.Get<JwtConfig>()).Returns(new JwtConfig
-            {
-                SecretKey = "supersecretkey1234567890",
-                Issuer = "TestIssuer",
-                Audience = "TestAudience",
-                ExpiryMinutes = 60
-            });
+            _mockUserRepository = new Mock<IUserRepository>();
 
-            _mockConfig.Setup(x => x.GetSection("JwtConfig")).Returns(jwtSection.Object);
+            var inMemorySettings = new Dictionary<string, string?>
+{
+    {"JwtConfig:SecretKey", "supersecretkey1234567890"},
+    {"JwtConfig:Issuer", "TestIssuer"},
+    {"JwtConfig:Audience", "TestAudience"},
+    {"JwtConfig:ExpiryMinutes", "60"}
+};
 
-            _controller = new AuthController(_mockConfig.Object);
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+
+
+            _controller = new AuthController(configuration, _mockUserRepository.Object);
+        }
+        private string HashPassword(string password)
+        {
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hash);
         }
 
         [Fact]
-        public void Login_ValidCredentials_ReturnsOkWithToken()
+        public async Task Login_ValidCredentials_ReturnsOkWithToken()
         {
             var request = new LoginRequest
             {
-                Username = "testuser",
-                Password = "P@ssw0rd"
+                Email = "testuser",
+                Password = "hashedpassword"
             };
 
-            var result = _controller.Login(request);
+            _mockUserRepository.Setup(x => x.GetByUsernameAsync(request.Email))
+                .ReturnsAsync(new User
+                {
+                    Email = request.Email,
+                    PasswordHash = HashPassword("hashedpassword"), // This should match the hash of "P@ssw0rd"
+                    Role = "User"
+                });
+
+            var result = await _controller.LoginAsync(request);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var tokenObj = okResult.Value as IDictionary<string, object>;
-            Assert.NotNull(tokenObj);
-            Assert.True(tokenObj.ContainsKey("token"));
-            Assert.IsType<string>(tokenObj["token"]);
+            var jObject = JObject.FromObject(okResult.Value);
+            string token = jObject["token"]?.ToString();
+            string role = jObject["role"]?.ToString();
+            Assert.NotNull(token);
+            Assert.NotNull(role);
+
         }
 
         [Fact]
-        public void Login_InvalidCredentials_ReturnsUnauthorized()
+        public async Task Login_InvalidCredentials_ReturnsUnauthorized()
         {
             var request = new LoginRequest
             {
-                Username = "wronguser",
+                Email = "wronguser",
                 Password = "wrongpassword"
             };
 
-            var result = _controller.Login(request);
+            var result = await _controller.LoginAsync(request);
+
 
             var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
             Assert.Equal("Invalid username or password", unauthorized.Value);
