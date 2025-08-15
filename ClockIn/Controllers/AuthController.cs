@@ -40,7 +40,7 @@ namespace ClockIn.Controllers
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new { token =  token, role = user.Role });
+            return Ok(new { token = token, role = user.Role });
         }
 
         private string HashPassword(string password)
@@ -53,7 +53,13 @@ namespace ClockIn.Controllers
         private string GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtConfig").Get<JwtConfig>();
-            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+            if (jwtSettings == null) throw new InvalidOperationException("JWT settings are not configured properly.");
+            if (string.IsNullOrWhiteSpace(jwtSettings.SecretKey)) throw new InvalidOperationException("JWT SecretKey is not configured.");
+            if (string.IsNullOrWhiteSpace(jwtSettings.Issuer)) throw new InvalidOperationException("JWT Issuer is not configured.");
+            if (string.IsNullOrWhiteSpace(jwtSettings.Audience)) throw new InvalidOperationException("JWT Audience is not configured.");
+            if(string.IsNullOrWhiteSpace(jwtSettings.ExpiryMinutes.ToString())) throw new InvalidOperationException("JWT ExpiryMinutes is not configured.");
+            
+            var key = SHA256.HashData(Encoding.ASCII.GetBytes(jwtSettings.SecretKey));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -76,7 +82,7 @@ namespace ClockIn.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            user.PasswordHash = HashPassword(user.PasswordHash); 
+            user.PasswordHash = HashPassword(user.PasswordHash);
             await _userRepository.CreateAsync(user);
 
             var token = GenerateJwtToken(user);

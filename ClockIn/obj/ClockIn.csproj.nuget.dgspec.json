@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Projects\\TimeTrackingServices\\ClockIn\\ClockIn.csproj": {}
+    "C:\\Users\\rajes\\Source\\Repos\\TimeTrackingServices\\ClockIn\\ClockIn.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Projects\\TimeTrackingServices\\ClockIn\\ClockIn.csproj": {
+    "C:\\Users\\rajes\\Source\\Repos\\TimeTrackingServices\\ClockIn\\ClockIn.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Projects\\TimeTrackingServices\\ClockIn\\ClockIn.csproj",
+        "projectUniqueName": "C:\\Users\\rajes\\Source\\Repos\\TimeTrackingServices\\ClockIn\\ClockIn.csproj",
         "projectName": "ClockIn",
-        "projectPath": "C:\\Users\\Projects\\TimeTrackingServices\\ClockIn\\ClockIn.csproj",
-        "packagesPath": "C:\\Users\\SrilekhaBalreddy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Projects\\TimeTrackingServices\\ClockIn\\obj\\",
+        "projectPath": "C:\\Users\\rajes\\Source\\Repos\\TimeTrackingServices\\ClockIn\\ClockIn.csproj",
+        "packagesPath": "C:\\Users\\rajes\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\rajes\\Source\\Repos\\TimeTrackingServices\\ClockIn\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\SrilekhaBalreddy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rajes\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -39,7 +39,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -52,6 +58,10 @@
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.18, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.7, )"
             },
             "Npgsql": {
               "target": "Package",
@@ -85,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
